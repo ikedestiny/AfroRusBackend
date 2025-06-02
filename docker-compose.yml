@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: afro-rus-backend
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/${DB_NAME:-afrorus_db}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER:-afro_user}  # Changed from postgres
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongo:27017/${MONGO_DB:-afrorus}?authSource=admin
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:15
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-afro_user} -d ${DB_NAME:-afrorus_db}"]  # Updated healthcheck
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: ${DB_USER:-afro_user}  # Changed from postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-afrorus_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  mongo:
+    image: mongo:6
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+volumes:
+  postgres_data:
+  mongo_data:
