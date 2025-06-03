@@ -1,6 +1,8 @@
 package dev.destiny.afrorusbackend.model;
 
 public enum SpaceType {
-    DOCUMENT,
-    LOAD
+    DOCUMENT_AVAILABLE,
+    DOCUMENT_NEEDED,
+    LOAD_AVAILABLE,
+    LOAD_NEEDED
 }
