@@ -19,7 +19,7 @@ public class SpaceService {
         return spaceRepo.findAll();
     }
 
-    public List<Space> getAllAvailableSpaces() {
+    public List<Space> getAllFreeSpaces() {
         List<Space> result = new ArrayList<>();
         result.addAll(spaceRepo.findSpacesByType(SpaceType.LOAD_AVAILABLE));
         result.addAll(spaceRepo.findSpacesByType(SpaceType.DOCUMENT_AVAILABLE));
