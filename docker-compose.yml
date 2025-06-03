@@ -26,6 +26,6 @@ services:
       PGPASSWORD: ${PGPASSWORD:-secret}
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
       PORT: 8080
-
+      DATABASE_URL: jdbc:postgresql://$${RAILWAY_PRIVATE_DOMAIN}:$${PGPORT:5432}/$${PGDATABASE}?sslmode=disable
 volumes:
   postgres_data:

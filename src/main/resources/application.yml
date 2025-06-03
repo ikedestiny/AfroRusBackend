@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${RAILWAY_PRIVATE_DOMAIN}:${PGPORT:5432}/${PGDATABASE}?sslmode=disable
+    url: ${DATABASE_URL}
     username: ${PGUSER}
     password: ${PGPASSWORD}
     driver-class-name: org.postgresql.Driver
