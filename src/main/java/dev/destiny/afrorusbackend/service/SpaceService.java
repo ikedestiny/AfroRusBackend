@@ -4,8 +4,10 @@ import dev.destiny.afrorusbackend.model.Space;
 import dev.destiny.afrorusbackend.model.SpaceType;
 import dev.destiny.afrorusbackend.repository.SpaceRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,5 +58,11 @@ public class SpaceService {
        return "Added space "+s.toString();
     }
 
+
+    // Runs every day at midnight
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void removeExpiredSpaces() {
+        spaceRepo.deleteSpacesByAvailableToBefore(LocalDateTime.now());
+    }
 
 }
