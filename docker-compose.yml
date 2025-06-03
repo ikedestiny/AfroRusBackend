@@ -1,40 +1,31 @@
-version: '3.8'  # You can remove this line if using newer Docker Compose versions
+version: '3.8'
 
 services:
   postgres:
     image: postgres:15
-    env_file:
-      - .env
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${PGUSER:-admin}  # Fallback to 'admin' if not set
+      POSTGRES_PASSWORD: ${PGPASSWORD:-secret}
+      POSTGRES_DB: ${PGDATABASE:-afro_rus_db}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
   springboot-app:
-    env_file:
-      - .env
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: afro-rus-backend
-    container_name: afro-rus-springboot
+    build: .
     ports:
       - "8080:8080"
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_HOST: ${SPRING_DATASOURCE_HOST}
-      SPRING_DATASOURCE_PORT: ${SPRING_DATASOURCE_PORT}
-      SPRING_DATASOURCE_DATABASE: ${SPRING_DATASOURCE_DATABASE}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
-      SERVER_PORT: ${SERVER_PORT}
-      # Add more Spring properties as needed
+      RAILWAY_PRIVATE_DOMAIN: postgres  # Maps to the service name in Docker
+      PGPORT: 5432
+      PGDATABASE: ${PGDATABASE:-afro_rus_db}
+      PGUSER: ${PGUSER:-admin}
+      PGPASSWORD: ${PGPASSWORD:-secret}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      PORT: 8080
 
 volumes:
   postgres_data:
