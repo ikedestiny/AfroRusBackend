@@ -1,21 +1,22 @@
 spring:
   datasource:
-    url: jdbc:${DATABASE_URL}
-    username: ${PGUSER}
-    password: ${PGPASSWORD}
+    url: jdbc:postgresql://${RAILWAY_PRIVATE_DOMAIN:localhost}:${PGPORT:5432}/${PGDATABASE:afro_rus_db}?sslmode=disable
+    username: ${PGUSER:admin}
+    password: ${PGPASSWORD:secret}
     driver-class-name: org.postgresql.Driver
-    hikari:
-      connection-timeout: 30000
-      maximum-pool-size: 5
-
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: update  # Use 'validate', 'update', 'create', or 'create-drop' based on your use case
     show-sql: true
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
-  port: ${PORT:8080}  # Note: Railway uses PORT, not SERVER_PORT
+  port: ${PORT:8080}
+
+# Optional: for logging or debugging
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
